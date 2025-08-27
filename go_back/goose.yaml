@@ -1,0 +1,14 @@
+version: "3.1"
+
+migrations:
+  dir: ./migrations
+  table: goose_db_version
+  dialect: postgres
+
+db:
+  host: localhost
+  port: 5432
+  database: gng_db
+  user: postgres
+  password: password
+  sslmode: disable

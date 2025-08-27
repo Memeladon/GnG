@@ -1,0 +1,45 @@
+package models
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+// Game represents a game session for a player
+type Game struct {
+	ID             uuid.UUID      `json:"id" db:"id"`
+	PlayerID       uuid.UUID      `json:"player_id" db:"player_id"`
+	Status         GameStatus     `json:"status" db:"status"`
+	Score          int            `json:"score" db:"score"`
+	GameConditions GameConditions `json:"game_conditions" db:"game_conditions"`
+	DiceModifier   *DiceModifier  `json:"dice_modifier,omitempty" db:"dice_modifier"`
+	GameModifier   *GameModifier  `json:"game_modifier,omitempty" db:"game_modifier"`
+	StartedAt      time.Time      `json:"started_at" db:"started_at"`
+	CompletedAt    *time.Time     `json:"completed_at,omitempty" db:"completed_at"`
+	CreatedAt      time.Time      `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at" db:"updated_at"`
+
+	// Relations
+	Player *Player `json:"player,omitempty"`
+}
+
+// GameCreate represents data needed to create a new game
+type GameCreate struct {
+	PlayerID       uuid.UUID      `json:"player_id" validate:"required"`
+	Status         GameStatus     `json:"status" validate:"required"`
+	Score          int            `json:"score"`
+	GameConditions GameConditions `json:"game_conditions" validate:"required"`
+	DiceModifier   *DiceModifier  `json:"dice_modifier,omitempty"`
+	GameModifier   *GameModifier  `json:"game_modifier,omitempty"`
+}
+
+// GameUpdate represents data that can be updated for a game
+type GameUpdate struct {
+	Status         *GameStatus     `json:"status,omitempty"`
+	Score          *int            `json:"score,omitempty"`
+	GameConditions *GameConditions `json:"game_conditions,omitempty"`
+	DiceModifier   *DiceModifier   `json:"dice_modifier,omitempty"`
+	GameModifier   *GameModifier   `json:"game_modifier,omitempty"`
+	CompletedAt    *time.Time      `json:"completed_at,omitempty"`
+}
