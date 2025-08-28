@@ -3,22 +3,24 @@ package handlers
 import (
 	"net/http"
 
+	"gng/internal/services"
+
 	"github.com/go-chi/chi/v5"
 )
 
-// ItemHandler handles item-related HTTP requests
+// ItemHandler обрабатывает HTTP-запросы, связанные с предметами
 type ItemHandler struct {
-	// itemService *services.ItemService
+	itemService *services.ItemService
 }
 
-// NewItemHandler creates a new item handler
-func NewItemHandler(itemService interface{}) *ItemHandler {
+// NewItemHandler создает новый обработчик предметов
+func NewItemHandler(itemService *services.ItemService) *ItemHandler {
 	return &ItemHandler{
-		// itemService: itemService,
+		itemService: itemService,
 	}
 }
 
-// Routes sets up the routes for item endpoints
+// Routes настраивает маршруты для эндпоинтов предметов
 func (h *ItemHandler) Routes(r chi.Router) {
 	r.Get("/", h.List)
 	r.Post("/", h.Create)
@@ -27,31 +29,31 @@ func (h *ItemHandler) Routes(r chi.Router) {
 	r.Delete("/{id}", h.Delete)
 }
 
-// List handles GET /api/v1/items
+// List обрабатывает GET /api/v1/items
 func (h *ItemHandler) List(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("List items - not implemented yet"))
 }
 
-// Create handles POST /api/v1/items
+// Create обрабатывает POST /api/v1/items
 func (h *ItemHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Create item - not implemented yet"))
 }
 
-// GetByID handles GET /api/v1/items/{id}
+// GetByID обрабатывает GET /api/v1/items/{id}
 func (h *ItemHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Get item by ID - not implemented yet"))
 }
 
-// Update handles PUT /api/v1/items/{id}
+// Update обрабатывает PUT /api/v1/items/{id}
 func (h *ItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Update item - not implemented yet"))
 }
 
-// Delete handles DELETE /api/v1/items/{id}
+// Delete обрабатывает DELETE /api/v1/items/{id}
 func (h *ItemHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Delete item - not implemented yet"))

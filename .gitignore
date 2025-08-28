@@ -1,6 +1,7 @@
 ### Example user template
 
-*.env
+docker.env
+.env
 
 # IntelliJ project files
 .idea

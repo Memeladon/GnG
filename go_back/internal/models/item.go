@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Item represents an item in the game
+// Item представляет предмет в игре
 type Item struct {
 	ID             uuid.UUID      `json:"id" db:"id"`
 	Name           string         `json:"name" db:"name"`
@@ -20,11 +20,10 @@ type Item struct {
 	CreatedAt      time.Time      `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at" db:"updated_at"`
 
-	// Relations
 	ItemInstances []ItemInstance `json:"item_instances,omitempty"`
 }
 
-// ItemCreate represents data needed to create a new item
+// ItemCreate представляет данные, необходимые для создания нового предмета
 type ItemCreate struct {
 	Name           string         `json:"name" validate:"required,min=1,max=100"`
 	Description    string         `json:"description,omitempty"`
@@ -36,7 +35,7 @@ type ItemCreate struct {
 	Rarity         int            `json:"rarity" validate:"required,min=1,max=10"`
 }
 
-// ItemUpdate represents data that can be updated for an item
+// ItemUpdate представляет данные, которые можно обновить для предмета
 type ItemUpdate struct {
 	Name           *string         `json:"name,omitempty" validate:"omitempty,min=1,max=100"`
 	Description    *string         `json:"description,omitempty"`

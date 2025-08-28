@@ -8,19 +8,19 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// UserHandler handles user-related HTTP requests
+// UserHandler обрабатывает HTTP-запросы, связанные с пользователями
 type UserHandler struct {
 	userService *services.UserService
 }
 
-// NewUserHandler creates a new user handler
+// NewUserHandler создает новый обработчик пользователей
 func NewUserHandler(userService *services.UserService) *UserHandler {
 	return &UserHandler{
 		userService: userService,
 	}
 }
 
-// Routes sets up the routes for user endpoints
+// Routes настраивает маршруты для пользовательских эндпоинтов
 func (h *UserHandler) Routes(r chi.Router) {
 	r.Get("/", h.List)
 	r.Post("/", h.Create)
@@ -29,31 +29,31 @@ func (h *UserHandler) Routes(r chi.Router) {
 	r.Delete("/{id}", h.Delete)
 }
 
-// List handles GET /api/v1/users
+// List обрабатывает GET /api/v1/users
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("List users - not implemented yet"))
 }
 
-// Create handles POST /api/v1/users
+// Create обрабатывает POST /api/v1/users
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Create user - not implemented yet"))
 }
 
-// GetByID handles GET /api/v1/users/{id}
+// GetByID обрабатывает GET /api/v1/users/{id}
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Get user by ID - not implemented yet"))
 }
 
-// Update handles PUT /api/v1/users/{id}
+// Update обрабатывает PUT /api/v1/users/{id}
 func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Update user - not implemented yet"))
 }
 
-// Delete handles DELETE /api/v1/users/{id}
+// Delete обрабатывает DELETE /api/v1/users/{id}
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Delete user - not implemented yet"))

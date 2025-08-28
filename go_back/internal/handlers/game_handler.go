@@ -3,22 +3,24 @@ package handlers
 import (
 	"net/http"
 
+	"gng/internal/services"
+
 	"github.com/go-chi/chi/v5"
 )
 
-// GameHandler handles game-related HTTP requests
+// GameHandler обрабатывает HTTP-запросы, связанные с играми
 type GameHandler struct {
-	// gameService *services.GameService
+	gameService *services.GameService
 }
 
-// NewGameHandler creates a new game handler
-func NewGameHandler(gameService interface{}) *GameHandler {
+// NewGameHandler создает новый обработчик игр
+func NewGameHandler(gameService *services.GameService) *GameHandler {
 	return &GameHandler{
-		// gameService: gameService,
+		gameService: gameService,
 	}
 }
 
-// Routes sets up the routes for game endpoints
+// Routes настраивает маршруты для игровых эндпоинтов
 func (h *GameHandler) Routes(r chi.Router) {
 	r.Get("/", h.List)
 	r.Post("/", h.Create)
@@ -27,31 +29,31 @@ func (h *GameHandler) Routes(r chi.Router) {
 	r.Delete("/{id}", h.Delete)
 }
 
-// List handles GET /api/v1/games
+// List обрабатывает GET /api/v1/games
 func (h *GameHandler) List(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("List games - not implemented yet"))
 }
 
-// Create handles POST /api/v1/games
+// Create обрабатывает POST /api/v1/games
 func (h *GameHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Create game - not implemented yet"))
 }
 
-// GetByID handles GET /api/v1/games/{id}
+// GetByID обрабатывает GET /api/v1/games/{id}
 func (h *GameHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Get game by ID - not implemented yet"))
 }
 
-// Update handles PUT /api/v1/games/{id}
+// Update обрабатывает PUT /api/v1/games/{id}
 func (h *GameHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Update game - not implemented yet"))
 }
 
-// Delete handles DELETE /api/v1/games/{id}
+// Delete обрабатывает DELETE /api/v1/games/{id}
 func (h *GameHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Delete game - not implemented yet"))

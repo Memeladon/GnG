@@ -5,44 +5,39 @@ import (
 	"database/sql"
 )
 
-// ItemService provides business logic for items
+// ItemService предоставляет бизнес-логику для предметов
 type ItemService struct {
 	db *sql.DB
 }
 
-// NewItemService creates a new item service
+// NewItemService создает новый сервис предметов
 func NewItemService(db *sql.DB) *ItemService {
 	return &ItemService{
 		db: db,
 	}
 }
 
-// GetByID retrieves an item by ID
+// GetByID получает предмет по ID
 func (s *ItemService) GetByID(ctx context.Context, id interface{}) (interface{}, error) {
-	// TODO: Implement item retrieval logic
 	return nil, nil
 }
 
-// Create creates a new item
+// Create создает новый предмет
 func (s *ItemService) Create(ctx context.Context, data interface{}) (interface{}, error) {
-	// TODO: Implement item creation logic
 	return nil, nil
 }
 
-// Update updates an existing item
+// Update обновляет существующий предмет
 func (s *ItemService) Update(ctx context.Context, id interface{}, data interface{}) (interface{}, error) {
-	// TODO: Implement item update logic
 	return nil, nil
 }
 
-// Delete deletes an item by ID
+// Delete удаляет предмет по ID
 func (s *ItemService) Delete(ctx context.Context, id interface{}) error {
-	// TODO: Implement item deletion logic
 	return nil
 }
 
-// List retrieves multiple items
+// List получает список предметов
 func (s *ItemService) List(ctx context.Context, limit, offset int) ([]interface{}, error) {
-	// TODO: Implement item listing logic
 	return nil, nil
 }

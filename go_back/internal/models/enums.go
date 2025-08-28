@@ -1,6 +1,6 @@
 package models
 
-// UserRights represents user role in the system
+// UserRights представляет роль пользователя в системе
 type UserRights string
 
 const (
@@ -10,7 +10,7 @@ const (
 	UserRightsPlayer    UserRights = "Участник"
 )
 
-// ItemType represents type of item
+// ItemType представляет тип предмета
 type ItemType string
 
 const (
@@ -20,7 +20,7 @@ const (
 	ItemTypeNeutral ItemType = "Нейтралка"
 )
 
-// GameStatus represents game status
+// GameStatus представляет статус игры
 type GameStatus string
 
 const (
@@ -30,7 +30,7 @@ const (
 	GameStatusCompleted GameStatus = "Пройдена"
 )
 
-// CellType represents type of cell on game board
+// CellType представляет тип клетки на игровом поле
 type CellType string
 
 const (
@@ -43,7 +43,7 @@ const (
 	CellTypeQuestion CellType = "Вопрос"
 )
 
-// GameConditions represents game conditions
+// GameConditions представляет игровые условия
 type GameConditions string
 
 const (
@@ -51,7 +51,7 @@ const (
 	GameConditionsGenre GameConditions = "Жанровое"
 )
 
-// DiceModifier represents dice modifier type
+// DiceModifier представляет тип модификатора кубика
 type DiceModifier string
 
 const (
@@ -59,7 +59,7 @@ const (
 	DiceModifierHuybic DiceModifier = "Кубик хуюбика"
 )
 
-// GameModifier represents game modifier type
+// GameModifier представляет тип игрового модификатора
 type GameModifier string
 
 const (
@@ -67,18 +67,18 @@ const (
 	GameModifierRambo GameModifier = "Повязка Рэмбо"
 )
 
-// EffectType represents type of item effect
+// EffectType представляет тип эффекта предмета
 type EffectType string
 
 const (
-	EffectTypePassive EffectType = "Пассивный"  // Работает пока в инвентаре
-	EffectTypeActive  EffectType = "Активный"   // Используется игроком
-	EffectTypeTarget  EffectType = "Целевой"    // Используется на других игроков
-	EffectTypeInstant EffectType = "Мгновенный" // Применяется сразу при выпадении
-	EffectTypeTrap    EffectType = "Ловушка"    // Оставляет след на клетке
+	EffectTypePassive EffectType = "Пассивный"
+	EffectTypeActive  EffectType = "Активный"
+	EffectTypeTarget  EffectType = "Целевой"
+	EffectTypeInstant EffectType = "Мгновенный"
+	EffectTypeTrap    EffectType = "Ловушка"
 )
 
-// EffectCategory represents category of effect
+// EffectCategory представляет категорию эффекта
 type EffectCategory string
 
 const (

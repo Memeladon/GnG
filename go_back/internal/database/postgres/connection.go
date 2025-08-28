@@ -3,19 +3,20 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"time"
+
+	"gng/internal/logger"
 
 	_ "github.com/lib/pq"
 )
 
-// DB represents the database connection
+// DB представляет соединение с базой данных
 type DB struct {
 	*sql.DB
 }
 
-// Config represents database configuration
+// Config представляет конфигурацию базы данных
 type Config struct {
 	Host     string
 	Port     string
@@ -25,7 +26,7 @@ type Config struct {
 	SSLMode  string
 }
 
-// NewConnection creates a new database connection
+// NewConnection создает новое соединение с базой данных
 func NewConnection() (*DB, error) {
 	config := getConfig()
 
@@ -37,21 +38,19 @@ func NewConnection() (*DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	// Configure connection pool
 	db.SetMaxOpenConns(25)
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxLifetime(5 * time.Minute)
 
-	// Test the connection
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	log.Println("Successfully connected to PostgreSQL database")
+	logger.GetDatabaseLogger().Info("Successfully connected to PostgreSQL database")
 	return &DB{db}, nil
 }
 
-// getConfig returns database configuration from environment variables
+// getConfig возвращает конфигурацию базы данных из переменных окружения
 func getConfig() *Config {
 	return &Config{
 		Host:     getEnv("DB_HOST", "localhost"),
@@ -63,7 +62,7 @@ func getConfig() *Config {
 	}
 }
 
-// getEnv gets environment variable with fallback
+// getEnv получает переменную окружения с резервным значением
 func getEnv(key, fallback string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -71,7 +70,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-// Close closes the database connection
+// Close закрывает соединение с базой данных
 func (db *DB) Close() error {
 	return db.DB.Close()
 }

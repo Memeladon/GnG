@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// PlayerStats represents player statistics
+// PlayerStats представляет статистику игрока
 type PlayerStats struct {
 	ID             uuid.UUID `json:"id" db:"id"`
 	PlayerID       uuid.UUID `json:"player_id" db:"player_id"`
@@ -22,16 +22,15 @@ type PlayerStats struct {
 	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 
-	// Relations
 	Player *Player `json:"player,omitempty"`
 }
 
-// PlayerStatsCreate represents data needed to create new player stats
+// PlayerStatsCreate представляет данные, необходимые для создания новой статистики игрока
 type PlayerStatsCreate struct {
 	PlayerID uuid.UUID `json:"player_id" validate:"required"`
 }
 
-// PlayerStatsUpdate represents data that can be updated for player stats
+// PlayerStatsUpdate представляет данные, которые можно обновить для статистики игрока
 type PlayerStatsUpdate struct {
 	GamesPlayed    *int `json:"games_played,omitempty"`
 	GamesWon       *int `json:"games_won,omitempty"`

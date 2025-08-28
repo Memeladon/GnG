@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Player represents a game character of a user
+// Player представляет игрового персонажа пользователя
 type Player struct {
 	ID             uuid.UUID  `json:"id" db:"id"`
 	CellID         int        `json:"cell_id" db:"cell_id"`
@@ -19,7 +19,6 @@ type Player struct {
 	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time  `json:"updated_at" db:"updated_at"`
 
-	// Relations
 	User      *User           `json:"user,omitempty"`
 	Cell      *Cell           `json:"cell,omitempty"`
 	Stats     *PlayerStats    `json:"stats,omitempty"`
@@ -28,7 +27,7 @@ type Player struct {
 	Games     []Game          `json:"games,omitempty"`
 }
 
-// PlayerCreate represents data needed to create a new player
+// PlayerCreate представляет данные, необходимые для создания нового игрока
 type PlayerCreate struct {
 	UserID       uuid.UUID  `json:"user_id" validate:"required"`
 	Username     string     `json:"username" validate:"required,min=3,max=50"`
@@ -37,7 +36,7 @@ type PlayerCreate struct {
 	CellID       int        `json:"cell_id" validate:"required,min=0"`
 }
 
-// PlayerUpdate represents data that can be updated for a player
+// PlayerUpdate представляет данные, которые можно обновить для игрока
 type PlayerUpdate struct {
 	Username       *string     `json:"username,omitempty" validate:"omitempty,min=3,max=50"`
 	ProfileImage   *string     `json:"profile_image,omitempty"`

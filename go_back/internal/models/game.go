@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Game represents a game session for a player
+// Game представляет игровую сессию для игрока
 type Game struct {
 	ID             uuid.UUID      `json:"id" db:"id"`
 	PlayerID       uuid.UUID      `json:"player_id" db:"player_id"`
@@ -20,11 +20,10 @@ type Game struct {
 	CreatedAt      time.Time      `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at" db:"updated_at"`
 
-	// Relations
 	Player *Player `json:"player,omitempty"`
 }
 
-// GameCreate represents data needed to create a new game
+// GameCreate представляет данные, необходимые для создания новой игры
 type GameCreate struct {
 	PlayerID       uuid.UUID      `json:"player_id" validate:"required"`
 	Status         GameStatus     `json:"status" validate:"required"`
@@ -34,7 +33,7 @@ type GameCreate struct {
 	GameModifier   *GameModifier  `json:"game_modifier,omitempty"`
 }
 
-// GameUpdate represents data that can be updated for a game
+// GameUpdate представляет данные, которые можно обновить для игры
 type GameUpdate struct {
 	Status         *GameStatus     `json:"status,omitempty"`
 	Score          *int            `json:"score,omitempty"`

@@ -5,44 +5,39 @@ import (
 	"database/sql"
 )
 
-// UserService provides business logic for users
+// UserService предоставляет бизнес-логику для пользователей
 type UserService struct {
 	db *sql.DB
 }
 
-// NewUserService creates a new user service
+// NewUserService создает новый сервис пользователей
 func NewUserService(db *sql.DB) *UserService {
 	return &UserService{
 		db: db,
 	}
 }
 
-// GetByID retrieves a user by ID
+// GetByID получает пользователя по ID
 func (s *UserService) GetByID(ctx context.Context, id interface{}) (interface{}, error) {
-	// TODO: Implement user retrieval logic
 	return nil, nil
 }
 
-// Create creates a new user
+// Create создает нового пользователя
 func (s *UserService) Create(ctx context.Context, data interface{}) (interface{}, error) {
-	// TODO: Implement user creation logic
 	return nil, nil
 }
 
-// Update updates an existing user
+// Update обновляет существующего пользователя
 func (s *UserService) Update(ctx context.Context, id interface{}, data interface{}) (interface{}, error) {
-	// TODO: Implement user update logic
 	return nil, nil
 }
 
-// Delete deletes a user by ID
+// Delete удаляет пользователя по ID
 func (s *UserService) Delete(ctx context.Context, id interface{}) error {
-	// TODO: Implement user deletion logic
 	return nil
 }
 
-// List retrieves multiple users
+// List получает список пользователей
 func (s *UserService) List(ctx context.Context, limit, offset int) ([]interface{}, error) {
-	// TODO: Implement user listing logic
 	return nil, nil
 }
