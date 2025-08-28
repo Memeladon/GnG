@@ -3,17 +3,21 @@ package services
 import (
 	"context"
 	"database/sql"
+
+	"gng/internal/utils"
 )
 
 // UserService предоставляет бизнес-логику для пользователей
 type UserService struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
 // NewUserService создает новый сервис пользователей
-func NewUserService(db *sql.DB) *UserService {
+func NewUserService(db *sql.DB, logger *logger.Logger) *UserService {
 	return &UserService{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

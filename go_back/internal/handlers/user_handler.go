@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"gng/internal/utils"
 	"gng/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -11,12 +12,14 @@ import (
 // UserHandler обрабатывает HTTP-запросы, связанные с пользователями
 type UserHandler struct {
 	userService *services.UserService
+	logger      *logger.Logger
 }
 
 // NewUserHandler создает новый обработчик пользователей
-func NewUserHandler(userService *services.UserService) *UserHandler {
+func NewUserHandler(userService *services.UserService, logger *logger.Logger) *UserHandler {
 	return &UserHandler{
 		userService: userService,
+		logger:      logger,
 	}
 }
 

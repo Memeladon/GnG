@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gng/internal/services"
+	"gng/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -11,12 +12,14 @@ import (
 // ItemHandler обрабатывает HTTP-запросы, связанные с предметами
 type ItemHandler struct {
 	itemService *services.ItemService
+	logger      *logger.Logger
 }
 
 // NewItemHandler создает новый обработчик предметов
-func NewItemHandler(itemService *services.ItemService) *ItemHandler {
+func NewItemHandler(itemService *services.ItemService, logger *logger.Logger) *ItemHandler {
 	return &ItemHandler{
 		itemService: itemService,
+		logger:      logger,
 	}
 }
 

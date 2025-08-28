@@ -3,17 +3,21 @@ package services
 import (
 	"context"
 	"database/sql"
+
+	"gng/internal/utils"
 )
 
 // GameService предоставляет бизнес-логику для игр
 type GameService struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
 // NewGameService создает новый сервис игр
-func NewGameService(db *sql.DB) *GameService {
+func NewGameService(db *sql.DB, logger *logger.Logger) *GameService {
 	return &GameService{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
