@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,30 +15,34 @@ import (
 
 	"gng/internal/database/postgres"
 	"gng/internal/handlers"
+	"gng/internal/utils"
 	"gng/internal/services"
 )
 
 func main() {
+	// Инициализация логгера
+	log := logger.NewLogger()
+
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables")
+		log.Info("No .env file found, using system environment variables")
 	}
 
 	// База данных
-	db, err := postgres.NewConnection()
+	db, err := postgres.NewConnection(log)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
 	// Сервисы
-	userService := services.NewUserService(db.DB)
-	gameService := services.NewGameService(db.DB)
-	itemService := services.NewItemService(db.DB)
+	userService := services.NewUserService(db.DB, log)
+	gameService := services.NewGameService(db.DB, log)
+	itemService := services.NewItemService(db.DB, log)
 
 	// Обработчики
-	userHandler := handlers.NewUserHandler(userService)
-	gameHandler := handlers.NewGameHandler(gameService)
-	itemHandler := handlers.NewItemHandler(itemService)
+	userHandler := handlers.NewUserHandler(userService, log)
+	gameHandler := handlers.NewGameHandler(gameService, log)
+	itemHandler := handlers.NewItemHandler(itemService, log)
 
 	// Роутер
 	r := chi.NewRouter()
@@ -84,7 +87,7 @@ func main() {
 
 	// Горутина для запуска сервера
 	go func() {
-		log.Printf("Server starting on port %s", port)
+		log.Infof("Server starting on port %s", port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Server failed to start: %v", err)
 		}
@@ -94,7 +97,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Println("Server shutting down...")
+	log.Info("Server shutting down...")
 
 	// Выключение
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -104,5 +107,5 @@ func main() {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
 
-	log.Println("Server exited")
+	log.Info("Server exited")
 }

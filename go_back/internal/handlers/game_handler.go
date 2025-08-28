@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"gng/internal/utils"
 	"gng/internal/services"
 
 	"github.com/go-chi/chi/v5"
@@ -11,12 +12,14 @@ import (
 // GameHandler обрабатывает HTTP-запросы, связанные с играми
 type GameHandler struct {
 	gameService *services.GameService
+	logger      *logger.Logger
 }
 
 // NewGameHandler создает новый обработчик игр
-func NewGameHandler(gameService *services.GameService) *GameHandler {
+func NewGameHandler(gameService *services.GameService, logger *logger.Logger) *GameHandler {
 	return &GameHandler{
 		gameService: gameService,
+		logger:      logger,
 	}
 }
 

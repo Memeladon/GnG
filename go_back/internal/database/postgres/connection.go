@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"gng/internal/logger"
+	"gng/internal/utils"
 
 	_ "github.com/lib/pq"
 )
@@ -27,7 +27,7 @@ type Config struct {
 }
 
 // NewConnection создает новое соединение с базой данных
-func NewConnection() (*DB, error) {
+func NewConnection(log *logger.Logger) (*DB, error) {
 	config := getConfig()
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
@@ -46,7 +46,7 @@ func NewConnection() (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	logger.GetDatabaseLogger().Info("Successfully connected to PostgreSQL database")
+	log.Info("Successfully connected to PostgreSQL database")
 	return &DB{db}, nil
 }
 

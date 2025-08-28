@@ -3,17 +3,21 @@ package services
 import (
 	"context"
 	"database/sql"
+
+	"gng/internal/utils"
 )
 
 // ItemService предоставляет бизнес-логику для предметов
 type ItemService struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
 // NewItemService создает новый сервис предметов
-func NewItemService(db *sql.DB) *ItemService {
+func NewItemService(db *sql.DB, logger *logger.Logger) *ItemService {
 	return &ItemService{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
