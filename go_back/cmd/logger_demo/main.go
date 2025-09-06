@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	logger "gng/internal/utils"
+	logger "gng/internal/utils/logger"
 )
 
 func main() {

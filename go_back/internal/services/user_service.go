@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"gng/internal/utils"
+	"gng/internal/utils/logger"
 )
 
 // UserService предоставляет бизнес-логику для пользователей
