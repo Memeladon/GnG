@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"gng/internal/utils"
+	"gng/internal/utils/logger"
 )
 
 // GameService предоставляет бизнес-логику для игр

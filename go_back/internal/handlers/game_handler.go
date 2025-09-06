@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"gng/internal/utils"
 	"gng/internal/services"
+	"gng/internal/utils/logger"
 
 	"github.com/go-chi/chi/v5"
 )

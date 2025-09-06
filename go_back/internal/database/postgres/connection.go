@@ -3,10 +3,10 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"time"
 
-	"gng/internal/utils"
+	"gng/internal/helper"
+	"gng/internal/utils/logger"
 
 	_ "github.com/lib/pq"
 )
@@ -53,21 +53,13 @@ func NewConnection(log *logger.Logger) (*DB, error) {
 // getConfig возвращает конфигурацию базы данных из переменных окружения
 func getConfig() *Config {
 	return &Config{
-		Host:     getEnv("DB_HOST", "localhost"),
-		Port:     getEnv("DB_PORT", "5432"),
-		User:     getEnv("DB_USER", "postgres"),
-		Password: getEnv("DB_PASSWORD", "password"),
-		DBName:   getEnv("DB_NAME", "gng_db"),
-		SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		Host:     helper.GetEnv("DB_HOST", "localhost"),
+		Port:     helper.GetEnv("DB_PORT", "5432"),
+		User:     helper.GetEnv("DB_USER", "postgres"),
+		Password: helper.GetEnv("DB_PASSWORD", "password"),
+		DBName:   helper.GetEnv("DB_NAME", "gng_db"),
+		SSLMode:  helper.GetEnv("DB_SSLMODE", "disable"),
 	}
-}
-
-// getEnv получает переменную окружения с резервным значением
-func getEnv(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return fallback
 }
 
 // Close закрывает соединение с базой данных

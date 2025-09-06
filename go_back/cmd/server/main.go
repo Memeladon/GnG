@@ -15,15 +15,16 @@ import (
 
 	"gng/internal/database/postgres"
 	"gng/internal/handlers"
-	"gng/internal/utils"
+	"gng/internal/helper"
 	"gng/internal/services"
+	"gng/internal/utils/logger"
 )
 
 func main() {
 	// Инициализация логгера
 	log := logger.NewLogger()
 
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(helper.GetEnv("ENV_PATH", ".env")); err != nil {
 		log.Info("No .env file found, using system environment variables")
 	}
 
