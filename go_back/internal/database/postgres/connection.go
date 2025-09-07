@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"gng/internal/utils"
+	logger "gng/internal/utils"
 
 	_ "github.com/lib/pq"
 )
@@ -30,6 +30,10 @@ type Config struct {
 func NewConnection(log *logger.Logger) (*DB, error) {
 	config := getConfig()
 
+	if config == nil {
+		return nil, fmt.Errorf("database configuration is incomplete: missing required environment variables (DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)")
+	}
+
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode)
 
@@ -52,22 +56,27 @@ func NewConnection(log *logger.Logger) (*DB, error) {
 
 // getConfig возвращает конфигурацию базы данных из переменных окружения
 func getConfig() *Config {
-	return &Config{
-		Host:     getEnv("DB_HOST", "localhost"),
-		Port:     getEnv("DB_PORT", "5432"),
-		User:     getEnv("DB_USER", "postgres"),
-		Password: getEnv("DB_PASSWORD", "password"),
-		DBName:   getEnv("DB_NAME", "gng_db"),
-		SSLMode:  getEnv("DB_SSLMODE", "disable"),
+	config := &Config{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		DBName:   os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
-}
 
-// getEnv получает переменную окружения с резервным значением
-func getEnv(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
+	// Проверяем, что все обязательные переменные установлены
+	if config.Host == "" || config.Port == "" || config.User == "" ||
+		config.Password == "" || config.DBName == "" {
+		return nil
 	}
-	return fallback
+
+	// Устанавливаем SSLMode по умолчанию, если не указан
+	if config.SSLMode == "" {
+		config.SSLMode = "disable"
+	}
+
+	return config
 }
 
 // Close закрывает соединение с базой данных
