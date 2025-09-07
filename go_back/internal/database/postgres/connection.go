@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gng/internal/helper"
+	"gng/internal/utils/helpers"
 	"gng/internal/utils/logger"
 
 	_ "github.com/lib/pq"
@@ -53,12 +53,12 @@ func NewConnection(log *logger.Logger) (*DB, error) {
 // getConfig возвращает конфигурацию базы данных из переменных окружения
 func getConfig() *Config {
 	return &Config{
-		Host:     helper.GetEnv("DB_HOST", "localhost"),
-		Port:     helper.GetEnv("DB_PORT", "5432"),
-		User:     helper.GetEnv("DB_USER", "postgres"),
-		Password: helper.GetEnv("DB_PASSWORD", "password"),
-		DBName:   helper.GetEnv("DB_NAME", "gng_db"),
-		SSLMode:  helper.GetEnv("DB_SSLMODE", "disable"),
+		Host:     helpers.GetEnv("DB_HOST", "localhost"),
+		Port:     helpers.GetEnv("DB_PORT", "5432"),
+		User:     helpers.GetEnv("DB_USER", "postgres"),
+		Password: helpers.GetEnv("DB_PASSWORD", "password"),
+		DBName:   helpers.GetEnv("DB_NAME", "gng_db"),
+		SSLMode:  helpers.GetEnv("DB_SSLMODE", "disable"),
 	}
 }
 
