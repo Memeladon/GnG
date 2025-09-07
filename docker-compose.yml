@@ -1,40 +1,61 @@
-version: '3.13'
-
 services:
 
-  backend:
-    container_name: backend
-    build: ./backend
-    ports:
-      - "5000:5000"
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
+  # TODO: 
+  # backend:
+  #   container_name: backend
+  #   build: ./backend
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - app-network
 
   db:
     container_name: postgres
     image: postgres:17-alpine
     restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: gng
+      PGDATA: /var/lib/postgresql/data/postgres_data
     ports:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./backend/docker.env
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "gng", "-c", "SELECT 1"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - app-network
+      - db-network
+
+  s3:
+    image: bitnami/minio:latest
+    container_name: minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_USE_SSL: ${MINIO_USE_SSL}
+    command: server /bitnami/minio/data --console-address :9001
+    volumes:
+      - minio_data:/bitnami/minio/data
 
 
 networks:
-  app-network:
+  db-network:
+    driver: bridge
+  s3-network:
+    driver: bridge
 
 
 volumes:
   postgres_data:
+  minio_data:
