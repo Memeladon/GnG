@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS sessions (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create session_users table
@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS session_users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     session_id UUID NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, session_id)
 );
 
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS cells (
     cell_type cell_type NOT NULL,
     image_path VARCHAR(255),
     position INTEGER NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(position)
 );
 
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS players (
     role user_rights NOT NULL,
     last_dice_value INTEGER DEFAULT 0,
     previous_cell_id INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create player_stats table
@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS player_stats (
     items_used INTEGER DEFAULT 0,
     traps_triggered INTEGER DEFAULT 0,
     jail_time INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(player_id)
 );
 
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS inventories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     player_id UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
     capacity INTEGER NOT NULL DEFAULT 10,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(player_id)
 );
 
@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS items (
     effect_category effect_category NOT NULL,
     effect_value TEXT,
     rarity INTEGER NOT NULL CHECK (rarity >= 1 AND rarity <= 10),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create item_instances table
@@ -97,9 +97,9 @@ CREATE TABLE IF NOT EXISTS item_instances (
     item_id UUID NOT NULL REFERENCES items(id) ON DELETE CASCADE,
     inventory_id UUID NOT NULL REFERENCES inventories(id) ON DELETE CASCADE,
     is_used BOOLEAN DEFAULT FALSE,
-    used_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    used_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create player_effects table
@@ -111,8 +111,8 @@ CREATE TABLE IF NOT EXISTS player_effects (
     effect_value TEXT,
     duration INTEGER NOT NULL DEFAULT -1, -- -1 for permanent
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create games table
@@ -124,10 +124,10 @@ CREATE TABLE IF NOT EXISTS games (
     game_conditions game_conditions NOT NULL,
     dice_modifier dice_modifier,
     game_modifier game_modifier,
-    started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    completed_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    started_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    completed_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Create indexes for better performance

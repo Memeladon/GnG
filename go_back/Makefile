@@ -5,8 +5,8 @@ BINARY_NAME=server
 BUILD_DIR=build
 MIGRATIONS_DIR=migrations
 
-# Database connection string (update as needed)
-DB_CONNECTION="host=localhost port=5432 user=postgres password=password dbname=gng_db sslmode=disable"
+# Database connection string from environment variables
+DB_CONNECTION="host=$(DB_HOST) port=$(DB_PORT) user=$(DB_USER) password=$(DB_PASSWORD) dbname=$(DB_NAME) sslmode=$(DB_SSLMODE)"
 
 # Default target
 all: build
@@ -73,10 +73,18 @@ help:
 	@echo "  run           - Run the application"
 	@echo "  test          - Run tests"
 	@echo "  clean         - Clean build artifacts"
-	@echo "  migrate-up    - Run database migrations up"
-	@echo "  migrate-down  - Run database migrations down"
+	@echo "  migrate-up    - Run database migrations up (requires DB_* env vars)"
+	@echo "  migrate-down  - Run database migrations down (requires DB_* env vars)"
 	@echo "  migrate-create - Create new migration"
 	@echo "  deps          - Install dependencies"
 	@echo "  fmt           - Format code"
 	@echo "  lint          - Lint code"
 	@echo "  help          - Show this help"
+	@echo ""
+	@echo "Required environment variables for database operations:"
+	@echo "  DB_HOST       - Database host"
+	@echo "  DB_PORT       - Database port"
+	@echo "  DB_USER       - Database user"
+	@echo "  DB_PASSWORD   - Database password"
+	@echo "  DB_NAME       - Database name"
+	@echo "  DB_SSLMODE    - SSL mode (optional, defaults to 'disable')"
