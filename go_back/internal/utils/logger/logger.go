@@ -47,27 +47,27 @@ func NewLoggerWithLevel(level LogLevel) *Logger {
 	return l
 }
 
-func (l *Logger) getCallerInfo() map[string]interface{} {
+func (l *Logger) getCallerInfo() map[string]any {
 	pc, file, line, ok := runtime.Caller(2)
 	if !ok {
-		return map[string]interface{}{}
+		return map[string]any{}
 	}
 
 	funcName := runtime.FuncForPC(pc).Name()
 	parts := strings.Split(funcName, ".")
 	shortFuncName := parts[len(parts)-1]
 
-	return map[string]interface{}{
+	return map[string]any{
 		"file":     filepath.Base(file),
 		"line":     line,
 		"function": shortFuncName,
 	}
 }
 
-func (l *Logger) logWithCaller(level log.Level, msg string, fields ...interface{}) {
+func (l *Logger) logWithCaller(level log.Level, msg string, fields ...any) {
 	callerInfo := l.getCallerInfo()
 
-	allFields := []interface{}{
+	allFields := []any{
 		"file", callerInfo["file"],
 		"line", callerInfo["line"],
 		"function", callerInfo["function"],
@@ -78,40 +78,40 @@ func (l *Logger) logWithCaller(level log.Level, msg string, fields ...interface{
 	l.logger.With(allFields...).Log(level, msg)
 }
 
-func (l *Logger) Debug(msg string, fields ...interface{}) {
+func (l *Logger) Debug(msg string, fields ...any) {
 	l.logWithCaller(log.DebugLevel, msg, fields...)
 }
 
-func (l *Logger) Info(msg string, fields ...interface{}) {
+func (l *Logger) Info(msg string, fields ...any) {
 	l.logWithCaller(log.InfoLevel, msg, fields...)
 }
 
-func (l *Logger) Warn(msg string, fields ...interface{}) {
+func (l *Logger) Warn(msg string, fields ...any) {
 	l.logWithCaller(log.WarnLevel, msg, fields...)
 }
 
-func (l *Logger) Error(msg string, fields ...interface{}) {
+func (l *Logger) Error(msg string, fields ...any) {
 	l.logWithCaller(log.ErrorLevel, msg, fields...)
 }
 
-func (l *Logger) Fatal(msg string, fields ...interface{}) {
+func (l *Logger) Fatal(msg string, fields ...any) {
 	l.logWithCaller(log.FatalLevel, msg, fields...)
 	os.Exit(1)
 }
 
-func (l *Logger) Infof(format string, args ...interface{}) {
+func (l *Logger) Infof(format string, args ...any) {
 	l.Info(fmt.Sprintf(format, args...))
 }
 
-func (l *Logger) Warnf(format string, args ...interface{}) {
+func (l *Logger) Warnf(format string, args ...any) {
 	l.Warn(fmt.Sprintf(format, args...))
 }
 
-func (l *Logger) Errorf(format string, args ...interface{}) {
+func (l *Logger) Errorf(format string, args ...any) {
 	l.Error(fmt.Sprintf(format, args...))
 }
 
-func (l *Logger) Fatalf(format string, args ...interface{}) {
+func (l *Logger) Fatalf(format string, args ...any) {
 	l.Fatal(fmt.Sprintf(format, args...))
 }
 
@@ -132,7 +132,7 @@ func (l *Logger) SetLevel(level LogLevel) {
 }
 
 // WithField добавляет поле к логгеру
-func (l *Logger) WithField(key string, value interface{}) *Logger {
+func (l *Logger) WithField(key string, value any) *Logger {
 	newLogger := &Logger{
 		logger: l.logger.With(key, value),
 	}
@@ -140,8 +140,8 @@ func (l *Logger) WithField(key string, value interface{}) *Logger {
 }
 
 // WithFields добавляет несколько полей к логгеру
-func (l *Logger) WithFields(fields map[string]interface{}) *Logger {
-	var args []interface{}
+func (l *Logger) WithFields(fields map[string]any) *Logger {
+	var args []any
 	for k, v := range fields {
 		args = append(args, k, v)
 	}

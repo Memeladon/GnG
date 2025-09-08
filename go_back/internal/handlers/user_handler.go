@@ -23,7 +23,6 @@ func NewUserHandler(userService *services.UserService, logger *logger.Logger) *U
 
 func (h *UserHandler) Routes(r chi.Router) {
 	r.Get("/", h.List)
-	r.Post("/", h.Create)
 	r.Get("/{id}", h.GetByID)
 	r.Put("/{id}", h.Update)
 	r.Delete("/{id}", h.Delete)
@@ -32,11 +31,6 @@ func (h *UserHandler) Routes(r chi.Router) {
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("List users - not implemented yet"))
-}
-
-func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Create user - not implemented yet"))
 }
 
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {

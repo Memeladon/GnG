@@ -88,14 +88,14 @@ cellData := &models.CellCreate{
 cell, err := cellRepo.CreateOne(ctx, cellData)
 
 // Добавление ловушки
-trapData := map[string]interface{}{
+trapData := map[string]any{
     "type": "jail",
     "duration": 3,
 }
 updatedCell, err := cellRepo.AddTrapToCell(ctx, cell.ID, trapData)
 
 // Поиск клеток
-cells, err := cellRepo.FindBy(ctx, map[string]interface{}{
+cells, err := cellRepo.FindBy(ctx, map[string]any{
     "cell_type": models.CellTypeTrap,
 })
 ```

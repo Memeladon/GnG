@@ -22,7 +22,7 @@ type Cell struct {
 }
 
 // JSONB представляет поле JSONB для PostgreSQL
-type JSONB []map[string]interface{}
+type JSONB []map[string]any
 
 // Value реализует интерфейс driver.Valuer
 func (j JSONB) Value() (driver.Value, error) {
@@ -33,7 +33,7 @@ func (j JSONB) Value() (driver.Value, error) {
 }
 
 // Scan реализует интерфейс sql.Scanner
-func (j *JSONB) Scan(value interface{}) error {
+func (j *JSONB) Scan(value any) error {
 	if value == nil {
 		*j = nil
 		return nil

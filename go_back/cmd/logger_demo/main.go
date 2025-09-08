@@ -36,7 +36,7 @@ func main() {
 	log.WithField("error", err.Error()).Error("❌ Failed to process request")
 
 	// 5. Логирование с несколькими полями
-	log.WithFields(map[string]interface{}{
+	log.WithFields(map[string]any{
 		"user_id":    "12345",
 		"session_id": "sess_abc123",
 		"ip_address": "192.168.1.100",
@@ -86,7 +86,7 @@ func main() {
 	log.Debug("🔍 Executing database query",
 		"table", "users",
 		"query", "SELECT * FROM users WHERE id = ?",
-		"params", []interface{}{"12345"},
+		"params", []any{"12345"},
 	)
 
 	// 12. Демонстрация завершения

@@ -12,23 +12,23 @@ import (
 // BaseRepository определяет интерфейс для всех операций репозитория
 type BaseRepository interface {
 	// Базовые CRUD операции
-	CreateOne(ctx context.Context, data interface{}) (interface{}, error)
-	CreateMany(ctx context.Context, dataList []interface{}) ([]interface{}, error)
-	GetOne(ctx context.Context, recordID interface{}) (interface{}, error)
-	GetAll(ctx context.Context) ([]interface{}, error)
-	UpdateOne(ctx context.Context, data interface{}) (interface{}, error)
-	UpdateBy(ctx context.Context, filters map[string]interface{}, updateData map[string]interface{}) (int, error)
-	DeleteOne(ctx context.Context, recordID interface{}) (bool, error)
-	DeleteBy(ctx context.Context, filters map[string]interface{}) (int, error)
+	CreateOne(ctx context.Context, data any) (any, error)
+	CreateMany(ctx context.Context, dataList []any) ([]any, error)
+	GetOne(ctx context.Context, recordID any) (any, error)
+	GetAll(ctx context.Context) ([]any, error)
+	UpdateOne(ctx context.Context, data any) (any, error)
+	UpdateBy(ctx context.Context, filters map[string]any, updateData map[string]any) (int, error)
+	DeleteOne(ctx context.Context, recordID any) (bool, error)
+	DeleteBy(ctx context.Context, filters map[string]any) (int, error)
 	DeleteAll(ctx context.Context) (int, error)
 
 	// Более сложные запросы
-	FindBy(ctx context.Context, filters map[string]interface{}) ([]interface{}, error)
-	FindOneBy(ctx context.Context, filters map[string]interface{}) (interface{}, error)
-	GetPaginated(ctx context.Context, offset, limit int, orderBy string, descOrder bool) ([]interface{}, error)
-	Count(ctx context.Context, filters map[string]interface{}) (int, error)
-	Exists(ctx context.Context, recordID interface{}) (bool, error)
-	ExistsBy(ctx context.Context, filters map[string]interface{}) (bool, error)
+	FindBy(ctx context.Context, filters map[string]any) ([]any, error)
+	FindOneBy(ctx context.Context, filters map[string]any) (any, error)
+	GetPaginated(ctx context.Context, offset, limit int, orderBy string, descOrder bool) ([]any, error)
+	Count(ctx context.Context, filters map[string]any) (int, error)
+	Exists(ctx context.Context, recordID any) (bool, error)
+	ExistsBy(ctx context.Context, filters map[string]any) (bool, error)
 
 	// Утилиты
 	GetTableName() string
@@ -62,14 +62,14 @@ func (repo *BaseRepositoryImpl) GetTableName() string {
 }
 
 // CreateOne создает новую запись
-func (repo *BaseRepositoryImpl) CreateOne(ctx context.Context, data interface{}) (interface{}, error) {
+func (repo *BaseRepositoryImpl) CreateOne(ctx context.Context, data any) (any, error) {
 	dataMap, err := repo.structToMap(data)
 	if err != nil {
 		return nil, fmt.Errorf("error converting data to map: %w", err)
 	}
 
 	columns := make([]string, 0, len(dataMap))
-	values := make([]interface{}, 0, len(dataMap))
+	values := make([]any, 0, len(dataMap))
 	placeholders := make([]string, 0, len(dataMap))
 
 	i := 1
@@ -94,7 +94,7 @@ func (repo *BaseRepositoryImpl) CreateOne(ctx context.Context, data interface{})
 
 	// Get the value and scan into it
 	val := reflect.ValueOf(result).Elem()
-	scanArgs := make([]interface{}, val.NumField())
+	scanArgs := make([]any, val.NumField())
 
 	for i := 0; i < val.NumField(); i++ {
 		scanArgs[i] = val.Field(i).Addr().Interface()
@@ -110,9 +110,9 @@ func (repo *BaseRepositoryImpl) CreateOne(ctx context.Context, data interface{})
 }
 
 // CreateMany создает несколько записей
-func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []interface{}) ([]interface{}, error) {
+func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []any) ([]any, error) {
 	if len(dataList) == 0 {
-		return []interface{}{}, nil
+		return []any{}, nil
 	}
 
 	tx, err := repo.db.BeginTx(ctx, nil)
@@ -121,7 +121,7 @@ func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []inter
 	}
 	defer tx.Rollback()
 
-	var results []interface{}
+	var results []any
 
 	for _, data := range dataList {
 		dataMap, err := repo.structToMap(data)
@@ -130,7 +130,7 @@ func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []inter
 		}
 
 		columns := make([]string, 0, len(dataMap))
-		values := make([]interface{}, 0, len(dataMap))
+		values := make([]any, 0, len(dataMap))
 		placeholders := make([]string, 0, len(dataMap))
 
 		i := 1
@@ -153,7 +153,7 @@ func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []inter
 		result := reflect.New(repo.modelType).Interface()
 
 		val := reflect.ValueOf(result).Elem()
-		scanArgs := make([]interface{}, val.NumField())
+		scanArgs := make([]any, val.NumField())
 
 		for i := 0; i < val.NumField(); i++ {
 			scanArgs[i] = val.Field(i).Addr().Interface()
@@ -176,7 +176,7 @@ func (repo *BaseRepositoryImpl) CreateMany(ctx context.Context, dataList []inter
 }
 
 // GetOne получает запись по ID
-func (repo *BaseRepositoryImpl) GetOne(ctx context.Context, recordID interface{}) (interface{}, error) {
+func (repo *BaseRepositoryImpl) GetOne(ctx context.Context, recordID any) (any, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1", repo.tableName)
 
 	row := repo.db.QueryRowContext(ctx, query, recordID)
@@ -184,7 +184,7 @@ func (repo *BaseRepositoryImpl) GetOne(ctx context.Context, recordID interface{}
 	result := reflect.New(repo.modelType).Interface()
 
 	val := reflect.ValueOf(result).Elem()
-	scanArgs := make([]interface{}, val.NumField())
+	scanArgs := make([]any, val.NumField())
 
 	for i := 0; i < val.NumField(); i++ {
 		scanArgs[i] = val.Field(i).Addr().Interface()
@@ -204,7 +204,7 @@ func (repo *BaseRepositoryImpl) GetOne(ctx context.Context, recordID interface{}
 }
 
 // GetAll получает все записи
-func (repo *BaseRepositoryImpl) GetAll(ctx context.Context) ([]interface{}, error) {
+func (repo *BaseRepositoryImpl) GetAll(ctx context.Context) ([]any, error) {
 	query := fmt.Sprintf("SELECT * FROM %s", repo.tableName)
 
 	rows, err := repo.db.QueryContext(ctx, query)
@@ -213,12 +213,12 @@ func (repo *BaseRepositoryImpl) GetAll(ctx context.Context) ([]interface{}, erro
 	}
 	defer rows.Close()
 
-	var results []interface{}
+	var results []any
 	for rows.Next() {
 		result := reflect.New(repo.modelType).Interface()
 
 		val := reflect.ValueOf(result).Elem()
-		scanArgs := make([]interface{}, val.NumField())
+		scanArgs := make([]any, val.NumField())
 
 		for i := 0; i < val.NumField(); i++ {
 			scanArgs[i] = val.Field(i).Addr().Interface()
@@ -235,7 +235,7 @@ func (repo *BaseRepositoryImpl) GetAll(ctx context.Context) ([]interface{}, erro
 }
 
 // UpdateOne обновляет существующую запись по ID
-func (repo *BaseRepositoryImpl) UpdateOne(ctx context.Context, data interface{}) (interface{}, error) {
+func (repo *BaseRepositoryImpl) UpdateOne(ctx context.Context, data any) (any, error) {
 	dataMap, err := repo.structToMap(data)
 	if err != nil {
 		return nil, fmt.Errorf("error converting data to map: %w", err)
@@ -254,7 +254,7 @@ func (repo *BaseRepositoryImpl) UpdateOne(ctx context.Context, data interface{})
 	}
 
 	setClauses := make([]string, 0, len(dataMap))
-	values := make([]interface{}, 0, len(dataMap)+1)
+	values := make([]any, 0, len(dataMap)+1)
 
 	i := 1
 	for column, value := range dataMap {
@@ -278,7 +278,7 @@ func (repo *BaseRepositoryImpl) UpdateOne(ctx context.Context, data interface{})
 
 	// Get the value and scan into it
 	val := reflect.ValueOf(result).Elem()
-	scanArgs := make([]interface{}, val.NumField())
+	scanArgs := make([]any, val.NumField())
 
 	for i := 0; i < val.NumField(); i++ {
 		scanArgs[i] = val.Field(i).Addr().Interface()
@@ -298,14 +298,14 @@ func (repo *BaseRepositoryImpl) UpdateOne(ctx context.Context, data interface{})
 }
 
 // UpdateBy обновляет записи по фильтрам
-func (repo *BaseRepositoryImpl) UpdateBy(ctx context.Context, filters map[string]interface{}, updateData map[string]interface{}) (int, error) {
+func (repo *BaseRepositoryImpl) UpdateBy(ctx context.Context, filters map[string]any, updateData map[string]any) (int, error) {
 	if len(filters) == 0 {
 		return 0, fmt.Errorf("filters cannot be empty for UpdateBy")
 	}
 
 	// Build SET clause
 	setClauses := make([]string, 0, len(updateData))
-	values := make([]interface{}, 0, len(updateData)+len(filters))
+	values := make([]any, 0, len(updateData)+len(filters))
 
 	i := 1
 	for column, value := range updateData {
@@ -340,7 +340,7 @@ func (repo *BaseRepositoryImpl) UpdateBy(ctx context.Context, filters map[string
 }
 
 // DeleteOne удаляет запись по ID
-func (repo *BaseRepositoryImpl) DeleteOne(ctx context.Context, recordID interface{}) (bool, error) {
+func (repo *BaseRepositoryImpl) DeleteOne(ctx context.Context, recordID any) (bool, error) {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", repo.tableName)
 
 	result, err := repo.db.ExecContext(ctx, query, recordID)
@@ -359,14 +359,13 @@ func (repo *BaseRepositoryImpl) DeleteOne(ctx context.Context, recordID interfac
 }
 
 // DeleteBy удаляет записи по фильтрам
-func (repo *BaseRepositoryImpl) DeleteBy(ctx context.Context, filters map[string]interface{}) (int, error) {
+func (repo *BaseRepositoryImpl) DeleteBy(ctx context.Context, filters map[string]any) (int, error) {
 	if len(filters) == 0 {
 		return 0, fmt.Errorf("filters cannot be empty for DeleteBy")
 	}
 
- 
 	whereClauses := make([]string, 0, len(filters))
-	values := make([]interface{}, 0, len(filters))
+	values := make([]any, 0, len(filters))
 
 	i := 1
 	for column, value := range filters {
@@ -406,14 +405,14 @@ func (repo *BaseRepositoryImpl) DeleteAll(ctx context.Context) (int, error) {
 }
 
 // FindBy находит записи по фильтрам
-func (repo *BaseRepositoryImpl) FindBy(ctx context.Context, filters map[string]interface{}) ([]interface{}, error) {
+func (repo *BaseRepositoryImpl) FindBy(ctx context.Context, filters map[string]any) ([]any, error) {
 	if len(filters) == 0 {
 		return repo.GetAll(ctx)
 	}
 
 	// Build WHERE clause
 	whereClauses := make([]string, 0, len(filters))
-	values := make([]interface{}, 0, len(filters))
+	values := make([]any, 0, len(filters))
 
 	i := 1
 	for column, value := range filters {
@@ -434,14 +433,14 @@ func (repo *BaseRepositoryImpl) FindBy(ctx context.Context, filters map[string]i
 	}
 	defer rows.Close()
 
-	var results []interface{}
+	var results []any
 	for rows.Next() {
 		// Create a new instance of the model
 		result := reflect.New(repo.modelType).Interface()
 
 		// Get the value and scan into it
 		val := reflect.ValueOf(result).Elem()
-		scanArgs := make([]interface{}, val.NumField())
+		scanArgs := make([]any, val.NumField())
 
 		for i := 0; i < val.NumField(); i++ {
 			scanArgs[i] = val.Field(i).Addr().Interface()
@@ -458,13 +457,13 @@ func (repo *BaseRepositoryImpl) FindBy(ctx context.Context, filters map[string]i
 }
 
 // FindOneBy находит одну запись по фильтрам
-func (repo *BaseRepositoryImpl) FindOneBy(ctx context.Context, filters map[string]interface{}) (interface{}, error) {
+func (repo *BaseRepositoryImpl) FindOneBy(ctx context.Context, filters map[string]any) (any, error) {
 	if len(filters) == 0 {
 		return nil, fmt.Errorf("filters cannot be empty for FindOneBy")
 	}
 
 	whereClauses := make([]string, 0, len(filters))
-	values := make([]interface{}, 0, len(filters))
+	values := make([]any, 0, len(filters))
 
 	i := 1
 	for column, value := range filters {
@@ -484,7 +483,7 @@ func (repo *BaseRepositoryImpl) FindOneBy(ctx context.Context, filters map[strin
 	result := reflect.New(repo.modelType).Interface()
 
 	val := reflect.ValueOf(result).Elem()
-	scanArgs := make([]interface{}, val.NumField())
+	scanArgs := make([]any, val.NumField())
 
 	for i := 0; i < val.NumField(); i++ {
 		scanArgs[i] = val.Field(i).Addr().Interface()
@@ -504,7 +503,7 @@ func (repo *BaseRepositoryImpl) FindOneBy(ctx context.Context, filters map[strin
 }
 
 // GetPaginated получает записи с пагинацией и сортировкой
-func (repo *BaseRepositoryImpl) GetPaginated(ctx context.Context, offset, limit int, orderBy string, descOrder bool) ([]interface{}, error) {
+func (repo *BaseRepositoryImpl) GetPaginated(ctx context.Context, offset, limit int, orderBy string, descOrder bool) ([]any, error) {
 	query := fmt.Sprintf("SELECT * FROM %s", repo.tableName)
 
 	if orderBy != "" {
@@ -523,12 +522,12 @@ func (repo *BaseRepositoryImpl) GetPaginated(ctx context.Context, offset, limit 
 	}
 	defer rows.Close()
 
-	var results []interface{}
+	var results []any
 	for rows.Next() {
 		result := reflect.New(repo.modelType).Interface()
 
 		val := reflect.ValueOf(result).Elem()
-		scanArgs := make([]interface{}, val.NumField())
+		scanArgs := make([]any, val.NumField())
 
 		for i := 0; i < val.NumField(); i++ {
 			scanArgs[i] = val.Field(i).Addr().Interface()
@@ -545,9 +544,9 @@ func (repo *BaseRepositoryImpl) GetPaginated(ctx context.Context, offset, limit 
 }
 
 // Count подсчитывает записи с опциональными фильтрами
-func (repo *BaseRepositoryImpl) Count(ctx context.Context, filters map[string]interface{}) (int, error) {
+func (repo *BaseRepositoryImpl) Count(ctx context.Context, filters map[string]any) (int, error) {
 	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", repo.tableName)
-	var values []interface{}
+	var values []any
 
 	if len(filters) > 0 {
 		whereClauses := make([]string, 0, len(filters))
@@ -570,7 +569,7 @@ func (repo *BaseRepositoryImpl) Count(ctx context.Context, filters map[string]in
 }
 
 // Exists проверяет существование записи по ID
-func (repo *BaseRepositoryImpl) Exists(ctx context.Context, recordID interface{}) (bool, error) {
+func (repo *BaseRepositoryImpl) Exists(ctx context.Context, recordID any) (bool, error) {
 	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1)", repo.tableName)
 
 	var exists bool
@@ -583,13 +582,13 @@ func (repo *BaseRepositoryImpl) Exists(ctx context.Context, recordID interface{}
 }
 
 // ExistsBy проверяет существование записи по фильтрам
-func (repo *BaseRepositoryImpl) ExistsBy(ctx context.Context, filters map[string]interface{}) (bool, error) {
+func (repo *BaseRepositoryImpl) ExistsBy(ctx context.Context, filters map[string]any) (bool, error) {
 	if len(filters) == 0 {
 		return false, fmt.Errorf("filters cannot be empty for ExistsBy")
 	}
 
 	whereClauses := make([]string, 0, len(filters))
-	values := make([]interface{}, 0, len(filters))
+	values := make([]any, 0, len(filters))
 
 	i := 1
 	for column, value := range filters {
@@ -614,8 +613,8 @@ func (repo *BaseRepositoryImpl) ExistsBy(ctx context.Context, filters map[string
 }
 
 // Вспомогательный метод для преобразования структуры в карту
-func (repo *BaseRepositoryImpl) structToMap(data interface{}) (map[string]interface{}, error) {
-	result := make(map[string]interface{})
+func (repo *BaseRepositoryImpl) structToMap(data any) (map[string]any, error) {
+	result := make(map[string]any)
 
 	val := reflect.ValueOf(data)
 	if val.Kind() == reflect.Ptr {
@@ -636,11 +635,15 @@ func (repo *BaseRepositoryImpl) structToMap(data interface{}) (map[string]interf
 			continue
 		}
 
-		if field.IsZero() && !fieldType.Type.Implements(reflect.TypeOf((*sql.NullString)(nil)).Elem()) {
+		if field.IsZero() {
 			continue
 		}
 
 		result[dbTag] = field.Interface()
+	}
+
+	if len(result) < 1 {
+		return nil, fmt.Errorf("no data parsed")
 	}
 
 	return result, nil

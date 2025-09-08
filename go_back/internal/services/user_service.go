@@ -2,39 +2,45 @@ package services
 
 import (
 	"context"
-	"database/sql"
 
+	"gng/internal/database/postgres/repositories"
+	"gng/internal/models"
 	"gng/internal/utils/logger"
 )
 
 type UserService struct {
-	db     *sql.DB
-	logger *logger.Logger
+	logger         *logger.Logger
+	userRepository repositories.UserRepository
 }
 
-func NewUserService(db *sql.DB, logger *logger.Logger) *UserService {
+func NewUserService(logger *logger.Logger, userRepository repositories.UserRepository) *UserService {
 	return &UserService{
-		db:     db,
-		logger: logger,
+		logger:         logger,
+		userRepository: userRepository,
 	}
 }
 
-func (s *UserService) GetByID(ctx context.Context, id interface{}) (interface{}, error) {
+func (s *UserService) GetByID(ctx context.Context, id any) (*models.User, error) {
 	return nil, nil
 }
 
-func (s *UserService) Create(ctx context.Context, data interface{}) (interface{}, error) {
+func (s *UserService) Create(ctx context.Context, data any) (*models.User, error) {
+	user, err := s.userRepository.CreateUserUnique(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *UserService) Update(ctx context.Context, id any, data any) (*models.User, error) {
 	return nil, nil
 }
 
-func (s *UserService) Update(ctx context.Context, id interface{}, data interface{}) (interface{}, error) {
-	return nil, nil
-}
-
-func (s *UserService) Delete(ctx context.Context, id interface{}) error {
+func (s *UserService) Delete(ctx context.Context, id any) error {
 	return nil
 }
 
-func (s *UserService) List(ctx context.Context, limit, offset int) ([]interface{}, error) {
+func (s *UserService) List(ctx context.Context, limit, offset int) ([]*models.User, error) {
 	return nil, nil
 }

@@ -15,7 +15,7 @@ import (
 // PlayerStatsRepository определяет интерфейс для операций со статистикой игроков
 type PlayerStatsRepository interface {
 	BaseRepository
-	IncrementStats(ctx context.Context, data map[string]interface{}) (*models.PlayerStats, error)
+	IncrementStats(ctx context.Context, data map[string]any) (*models.PlayerStats, error)
 }
 
 // PlayerStatsRepositoryImpl предоставляет реализацию для операций со статистикой игроков
@@ -32,7 +32,7 @@ func NewPlayerStatsRepository(db *sql.DB) *PlayerStatsRepositoryImpl {
 
 // IncrementStats увеличивает значения статистики игрока на указанные величины
 // Неизменяемые поля могут быть опущены
-func (repo *PlayerStatsRepositoryImpl) IncrementStats(ctx context.Context, data map[string]interface{}) (*models.PlayerStats, error) {
+func (repo *PlayerStatsRepositoryImpl) IncrementStats(ctx context.Context, data map[string]any) (*models.PlayerStats, error) {
 	playerID, ok := data["player_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("player_id is required and must be uuid.UUID")
@@ -83,7 +83,7 @@ func (repo *PlayerStatsRepositoryImpl) IncrementStats(ctx context.Context, data 
 		}
 	}
 
-	updateData := map[string]interface{}{
+	updateData := map[string]any{
 		"id":               stats.ID,
 		"games_played":     stats.GamesPlayed,
 		"games_won":        stats.GamesWon,

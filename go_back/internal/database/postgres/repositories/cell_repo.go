@@ -13,9 +13,9 @@ import (
 // CellRepository определяет интерфейс для операций с ячейками
 type CellRepository interface {
 	BaseRepository
-	AddTrapToCell(ctx context.Context, cellID int, trapData map[string]interface{}) (*models.Cell, error)
+	AddTrapToCell(ctx context.Context, cellID int, trapData map[string]any) (*models.Cell, error)
 	RemoveTrapFromCell(ctx context.Context, cellID int, trapIndex int) (*models.Cell, error)
-	GetCellTraps(ctx context.Context, cellID int) ([]map[string]interface{}, error)
+	GetCellTraps(ctx context.Context, cellID int) ([]map[string]any, error)
 }
 
 // CellRepositoryImpl предоставляет реализацию для операций с ячейками
@@ -31,7 +31,7 @@ func NewCellRepository(db *sql.DB) *CellRepositoryImpl {
 }
 
 // AddTrapToCell добавляет ловушку в JSON поле traps ячейки
-func (repo *CellRepositoryImpl) AddTrapToCell(ctx context.Context, cellID int, trapData map[string]interface{}) (*models.Cell, error) {
+func (repo *CellRepositoryImpl) AddTrapToCell(ctx context.Context, cellID int, trapData map[string]any) (*models.Cell, error) {
 	cellInterface, err := repo.GetOne(ctx, cellID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting cell: %w", err)
@@ -50,11 +50,11 @@ func (repo *CellRepositoryImpl) AddTrapToCell(ctx context.Context, cellID int, t
 	}
 
 	if cell.Traps == nil {
-		cell.Traps = make([]map[string]interface{}, 0)
+		cell.Traps = make([]map[string]any, 0)
 	}
 	cell.Traps = append(cell.Traps, trapData)
 
-	updateData := map[string]interface{}{
+	updateData := map[string]any{
 		"id":    cellID,
 		"traps": cell.Traps,
 	}
@@ -102,7 +102,7 @@ func (repo *CellRepositoryImpl) RemoveTrapFromCell(ctx context.Context, cellID i
 		cell.Traps = append(cell.Traps[:trapIndex], cell.Traps[trapIndex+1:]...)
 	}
 
-	updateData := map[string]interface{}{
+	updateData := map[string]any{
 		"id":    cellID,
 		"traps": cell.Traps,
 	}
@@ -127,13 +127,13 @@ func (repo *CellRepositoryImpl) RemoveTrapFromCell(ctx context.Context, cellID i
 }
 
 // GetCellTraps получает список ловушек для ячейки
-func (repo *CellRepositoryImpl) GetCellTraps(ctx context.Context, cellID int) ([]map[string]interface{}, error) {
+func (repo *CellRepositoryImpl) GetCellTraps(ctx context.Context, cellID int) ([]map[string]any, error) {
 	cellInterface, err := repo.GetOne(ctx, cellID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting cell: %w", err)
 	}
 	if cellInterface == nil {
-		return []map[string]interface{}{}, nil
+		return []map[string]any{}, nil
 	}
 
 	cell, ok := cellInterface.(*models.Cell)
@@ -146,7 +146,7 @@ func (repo *CellRepositoryImpl) GetCellTraps(ctx context.Context, cellID int) ([
 	}
 
 	if cell.Traps == nil {
-		return []map[string]interface{}{}, nil
+		return []map[string]any{}, nil
 	}
 
 	return cell.Traps, nil
