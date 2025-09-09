@@ -16,8 +16,8 @@ import (
 type InventoryRepository interface {
 	BaseRepository
 	IsInventoryFull(ctx context.Context, inventoryID uuid.UUID) (bool, error)
-	AddItemToInventory(ctx context.Context, data map[string]interface{}) (*models.ItemInstance, error)
-	ReplaceItemInInventory(ctx context.Context, data map[string]interface{}) (*models.ItemInstance, error)
+	AddItemToInventory(ctx context.Context, data map[string]any) (*models.ItemInstance, error)
+	ReplaceItemInInventory(ctx context.Context, data map[string]any) (*models.ItemInstance, error)
 	SearchItemsInInventory(ctx context.Context, inventoryID uuid.UUID, itemName string) ([]*models.ItemInstance, error)
 }
 
@@ -38,7 +38,7 @@ func NewInventoryRepository(db *sql.DB, itemInstanceRepo ItemInstanceRepository)
 // IsInventoryFull проверяет, заполнен ли инвентарь игрока
 // Максимальное количество предметов в инвентаре - 6
 func (repo *InventoryRepositoryImpl) IsInventoryFull(ctx context.Context, inventoryID uuid.UUID) (bool, error) {
-	count, err := repo.Count(ctx, map[string]interface{}{"inventory_id": inventoryID})
+	count, err := repo.Count(ctx, map[string]any{"inventory_id": inventoryID})
 	if err != nil {
 		return false, fmt.Errorf("error counting items: %w", err)
 	}
@@ -52,7 +52,7 @@ func (repo *InventoryRepositoryImpl) IsInventoryFull(ctx context.Context, invent
 
 // AddItemToInventory добавляет новый экземпляр предмета в инвентарь игрока
 // Проверяет, что инвентарь не заполнен
-func (repo *InventoryRepositoryImpl) AddItemToInventory(ctx context.Context, data map[string]interface{}) (*models.ItemInstance, error) {
+func (repo *InventoryRepositoryImpl) AddItemToInventory(ctx context.Context, data map[string]any) (*models.ItemInstance, error) {
 	inventoryID, ok := data["inventory_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("inventory_id is required and must be uuid.UUID")
@@ -91,7 +91,7 @@ func (repo *InventoryRepositoryImpl) AddItemToInventory(ctx context.Context, dat
 
 // ReplaceItemInInventory заменяет существующий экземпляр предмета в инвентаре новым
 // Старый экземпляр удаляется, создается новый с указанными параметрами
-func (repo *InventoryRepositoryImpl) ReplaceItemInInventory(ctx context.Context, data map[string]interface{}) (*models.ItemInstance, error) {
+func (repo *InventoryRepositoryImpl) ReplaceItemInInventory(ctx context.Context, data map[string]any) (*models.ItemInstance, error) {
 	oldItemInstanceID, ok := data["old_item_instance_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("old_item_instance_id is required and must be uuid.UUID")
@@ -162,7 +162,7 @@ func (repo *InventoryRepositoryImpl) ReplaceItemInInventory(ctx context.Context,
 // SearchItemsInInventory ищет экземпляры предметов в инвентаре игрока по названию предмета
 // Если название не указано, возвращает все предметы в инвентаре
 func (repo *InventoryRepositoryImpl) SearchItemsInInventory(ctx context.Context, inventoryID uuid.UUID, itemName string) ([]*models.ItemInstance, error) {
-	filters := map[string]interface{}{"inventory_id": inventoryID}
+	filters := map[string]any{"inventory_id": inventoryID}
 
 	itemInstancesInterface, err := repo.itemInstanceRepo.FindBy(ctx, filters)
 	if err != nil {

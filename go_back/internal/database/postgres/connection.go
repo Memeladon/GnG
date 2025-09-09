@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	logger "gng/internal/utils"
+	"gng/internal/utils/logger"
 
 	_ "github.com/lib/pq"
 )

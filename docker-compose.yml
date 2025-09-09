@@ -47,6 +47,8 @@ services:
     command: server /bitnami/minio/data --console-address :9001
     volumes:
       - minio_data:/bitnami/minio/data
+    networks:
+      - s3-network
 
 
 networks:

@@ -14,16 +14,18 @@ import (
 	"github.com/joho/godotenv"
 
 	"gng/internal/database/postgres"
+	"gng/internal/database/postgres/repositories"
 	"gng/internal/handlers"
-	"gng/internal/utils"
 	"gng/internal/services"
+	"gng/internal/utils/helpers"
+	"gng/internal/utils/logger"
 )
 
 func main() {
 	// Инициализация логгера
 	log := logger.NewLogger()
 
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(helpers.GetEnv("ENV_PATH", ".env")); err != nil {
 		log.Info("No .env file found, using system environment variables")
 	}
 
@@ -34,13 +36,17 @@ func main() {
 	}
 	defer db.Close()
 
+	// Репозитории
+	userRepository := repositories.NewUserRepository(db.DB)
+
 	// Сервисы
-	userService := services.NewUserService(db.DB, log)
+	userService := services.NewUserService(log, userRepository)
 	gameService := services.NewGameService(db.DB, log)
 	itemService := services.NewItemService(db.DB, log)
 
 	// Обработчики
 	userHandler := handlers.NewUserHandler(userService, log)
+	authHandler := handlers.NewAuthHandler(userService, log)
 	gameHandler := handlers.NewGameHandler(gameService, log)
 	itemHandler := handlers.NewItemHandler(itemService, log)
 
@@ -50,6 +56,7 @@ func main() {
 	// Мидлвары
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.StripSlashes)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -62,6 +69,7 @@ func main() {
 	// Роуты
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/users", userHandler.Routes)
+		r.Route("/auth", authHandler.Routes)
 		r.Route("/games", gameHandler.Routes)
 		r.Route("/items", itemHandler.Routes)
 	})
@@ -72,10 +80,7 @@ func main() {
 		w.Write([]byte("OK"))
 	})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	port := helpers.GetEnv("PORT", "8080")
 
 	srv := &http.Server{
 		Addr:         ":" + port,

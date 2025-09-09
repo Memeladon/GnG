@@ -15,8 +15,8 @@ import (
 // PlayerRepository определяет интерфейс для операций с игроками
 type PlayerRepository interface {
 	BaseRepository
-	CreatePlayerFirstTime(ctx context.Context, data map[string]interface{}) (*models.Player, error)
-	UpdatePlayerProfile(ctx context.Context, data map[string]interface{}) (*models.Player, error)
+	CreatePlayerFirstTime(ctx context.Context, data map[string]any) (*models.Player, error)
+	UpdatePlayerProfile(ctx context.Context, data map[string]any) (*models.Player, error)
 	GetPlayersBySessionID(ctx context.Context, sessionID uuid.UUID) ([]*models.Player, error)
 }
 
@@ -38,13 +38,13 @@ func NewPlayerRepository(db *sql.DB, inventoryRepo InventoryRepository, playerSt
 
 // CreatePlayerFirstTime создает нового игрового персонажа для пользователя, а также инвентарь и статистику
 // Проверяет, что у пользователя еще нет персонажа
-func (repo *PlayerRepositoryImpl) CreatePlayerFirstTime(ctx context.Context, data map[string]interface{}) (*models.Player, error) {
+func (repo *PlayerRepositoryImpl) CreatePlayerFirstTime(ctx context.Context, data map[string]any) (*models.Player, error) {
 	userID, ok := data["user_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("user_id is required and must be uuid.UUID")
 	}
 
-	exists, err := repo.ExistsBy(ctx, map[string]interface{}{"user_id": userID})
+	exists, err := repo.ExistsBy(ctx, map[string]any{"user_id": userID})
 	if err != nil {
 		return nil, fmt.Errorf("error checking if user has player: %w", err)
 	}
@@ -55,7 +55,7 @@ func (repo *PlayerRepositoryImpl) CreatePlayerFirstTime(ctx context.Context, dat
 
 	log.Printf("CreatePlayerFirstTime: Creating Player for user %s", userID)
 
-	inventoryData := map[string]interface{}{
+	inventoryData := map[string]any{
 		"player_id": nil,
 	}
 	inventoryInterface, err := repo.inventoryRepo.CreateOne(ctx, inventoryData)
@@ -104,7 +104,7 @@ func (repo *PlayerRepositoryImpl) CreatePlayerFirstTime(ctx context.Context, dat
 		player = playerValue.Addr().Interface().(*models.Player)
 	}
 
-	inventoryUpdateData := map[string]interface{}{
+	inventoryUpdateData := map[string]any{
 		"id":        inventory.ID,
 		"player_id": player.ID,
 	}
@@ -126,7 +126,7 @@ func (repo *PlayerRepositoryImpl) CreatePlayerFirstTime(ctx context.Context, dat
 
 // UpdatePlayerProfile обновляет профиль игрока (Player): username и avatar.
 // Проверяет уникальность username.
-func (repo *PlayerRepositoryImpl) UpdatePlayerProfile(ctx context.Context, data map[string]interface{}) (*models.Player, error) {
+func (repo *PlayerRepositoryImpl) UpdatePlayerProfile(ctx context.Context, data map[string]any) (*models.Player, error) {
 	playerID, ok := data["player_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("player_id is required and must be uuid.UUID")
@@ -143,7 +143,7 @@ func (repo *PlayerRepositoryImpl) UpdatePlayerProfile(ctx context.Context, data 
 
 	// Check username uniqueness if provided
 	if username, ok := data["username"].(string); ok && username != "" {
-		existingPlayerInterface, err := repo.FindOneBy(ctx, map[string]interface{}{"username": username})
+		existingPlayerInterface, err := repo.FindOneBy(ctx, map[string]any{"username": username})
 		if err != nil {
 			return nil, fmt.Errorf("error checking username uniqueness: %w", err)
 		}

@@ -63,7 +63,7 @@ func (repo *ItemInstanceRepositoryImpl) UseItem(ctx context.Context, itemInstanc
 	log.Printf("UseItem: ItemInstance %s -> marking as used", itemInstanceID)
 
 	now := time.Now()
-	updateData := map[string]interface{}{
+	updateData := map[string]any{
 		"id":      itemInstanceID,
 		"is_used": true,
 		"used_at": &now,

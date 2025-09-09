@@ -45,7 +45,7 @@ func (repo *SessionRepositoryImpl) CloseSession(ctx context.Context, sessionID u
 
 	log.Printf("CloseSession: Closing session %s", sessionID)
 
-	updateData := map[string]interface{}{
+	updateData := map[string]any{
 		"id":        sessionID,
 		"is_active": false,
 	}

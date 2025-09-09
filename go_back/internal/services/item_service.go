@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"gng/internal/utils"
+	"gng/internal/utils/logger"
 )
 
 // ItemService предоставляет бизнес-логику для предметов
@@ -22,26 +22,26 @@ func NewItemService(db *sql.DB, logger *logger.Logger) *ItemService {
 }
 
 // GetByID получает предмет по ID
-func (s *ItemService) GetByID(ctx context.Context, id interface{}) (interface{}, error) {
+func (s *ItemService) GetByID(ctx context.Context, id any) (any, error) {
 	return nil, nil
 }
 
 // Create создает новый предмет
-func (s *ItemService) Create(ctx context.Context, data interface{}) (interface{}, error) {
+func (s *ItemService) Create(ctx context.Context, data any) (any, error) {
 	return nil, nil
 }
 
 // Update обновляет существующий предмет
-func (s *ItemService) Update(ctx context.Context, id interface{}, data interface{}) (interface{}, error) {
+func (s *ItemService) Update(ctx context.Context, id any, data any) (any, error) {
 	return nil, nil
 }
 
 // Delete удаляет предмет по ID
-func (s *ItemService) Delete(ctx context.Context, id interface{}) error {
+func (s *ItemService) Delete(ctx context.Context, id any) error {
 	return nil
 }
 
 // List получает список предметов
-func (s *ItemService) List(ctx context.Context, limit, offset int) ([]interface{}, error) {
+func (s *ItemService) List(ctx context.Context, limit, offset int) ([]any, error) {
 	return nil, nil
 }

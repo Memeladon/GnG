@@ -15,8 +15,8 @@ import (
 // SessionUserRepository определяет интерфейс для операций с пользователями сессий
 type SessionUserRepository interface {
 	BaseRepository
-	AddUserToSession(ctx context.Context, data map[string]interface{}) (*models.SessionUser, error)
-	GetSessionUsersWithUserData(ctx context.Context, sessionID uuid.UUID) ([]map[string]interface{}, error)
+	AddUserToSession(ctx context.Context, data map[string]any) (*models.SessionUser, error)
+	GetSessionUsersWithUserData(ctx context.Context, sessionID uuid.UUID) ([]map[string]any, error)
 }
 
 // SessionUserRepositoryImpl предоставляет реализацию для операций с пользователями сессий
@@ -33,7 +33,7 @@ func NewSessionUserRepository(db *sql.DB) *SessionUserRepositoryImpl {
 
 // AddUserToSession добавляет пользователя в игровую сессию через промежуточную таблицу SessionUser
 // Проверяет, что пользователь еще не в этой сессии
-func (repo *SessionUserRepositoryImpl) AddUserToSession(ctx context.Context, data map[string]interface{}) (*models.SessionUser, error) {
+func (repo *SessionUserRepositoryImpl) AddUserToSession(ctx context.Context, data map[string]any) (*models.SessionUser, error) {
 	sessionID, ok := data["session_id"].(uuid.UUID)
 	if !ok {
 		return nil, fmt.Errorf("session_id is required and must be uuid.UUID")
@@ -44,7 +44,7 @@ func (repo *SessionUserRepositoryImpl) AddUserToSession(ctx context.Context, dat
 		return nil, fmt.Errorf("user_id is required and must be uuid.UUID")
 	}
 
-	exists, err := repo.ExistsBy(ctx, map[string]interface{}{
+	exists, err := repo.ExistsBy(ctx, map[string]any{
 		"session_id": sessionID,
 		"user_id":    userID,
 	})
@@ -81,8 +81,8 @@ func (repo *SessionUserRepositoryImpl) AddUserToSession(ctx context.Context, dat
 }
 
 // GetSessionUsersWithUserData возвращает список пользователей и их связей для заданной игровой сессии
-func (repo *SessionUserRepositoryImpl) GetSessionUsersWithUserData(ctx context.Context, sessionID uuid.UUID) ([]map[string]interface{}, error) {
+func (repo *SessionUserRepositoryImpl) GetSessionUsersWithUserData(ctx context.Context, sessionID uuid.UUID) ([]map[string]any, error) {
 	log.Printf("GetSessionUsersWithUserData: Getting session users for session %s", sessionID)
 
-	return []map[string]interface{}{}, nil
+	return []map[string]any{}, nil
 }
