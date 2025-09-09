@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"gng/internal/database/postgres/repositories"
 	"gng/internal/models"
@@ -22,6 +23,20 @@ func NewUserService(logger *logger.Logger, userRepository repositories.UserRepos
 
 func (s *UserService) GetByID(ctx context.Context, id any) (*models.User, error) {
 	return nil, nil
+}
+
+func (s *UserService) GetByLogin(ctx context.Context, login string) (*models.User, error) {
+	found, err := s.userRepository.FindOneBy(ctx, map[string]any{"login": login})
+	if err != nil {
+		return nil, err
+	}
+
+	user, ok := found.(*models.User)
+	if !ok {
+		return nil, errors.New("could not select user")
+	}
+
+	return user, nil
 }
 
 func (s *UserService) Create(ctx context.Context, data any) (*models.User, error) {
