@@ -29,7 +29,7 @@ func AuthRoute(next http.Handler) http.Handler {
 			return
 		}
 
-		authToken = authToken[len(tokenPrefix):]
+		authToken = strings.TrimPrefix(authToken, tokenPrefix)
 		claims, err := token.Parse(authToken)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)

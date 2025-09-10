@@ -2,6 +2,7 @@ package token
 
 import (
 	"errors"
+	"fmt"
 	"gng/internal/utils/helpers"
 	"os"
 	"time"
@@ -39,7 +40,7 @@ func newClaims(tokenClaims TokenClaims) (jwt.MapClaims, error) {
 	claims := jwt.MapClaims{
 		"sub":    tokenClaims.UserId,
 		"subLog": tokenClaims.UserLogin,
-		"exp":    expAt.Unix(), // Short expiration
+		"exp":    expAt.Unix(),
 	}
 
 	return claims, nil
@@ -84,6 +85,14 @@ func Parse(signedToken string) (*TokenClaims, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil, errors.New("invalid token")
+	}
+
+	expAt := int64(claims["exp"].(float64))
+	tokenTime := time.Unix(expAt, 0)
+	fmt.Println(tokenTime, time.Now())
+
+	if time.Now().After(tokenTime) {
+		return nil, errors.New("token expired")
 	}
 
 	return &TokenClaims{
