@@ -16,6 +16,7 @@ import (
 	"gng/internal/database/postgres"
 	"gng/internal/database/postgres/repositories"
 	"gng/internal/handlers"
+	"gng/internal/middlewares"
 	"gng/internal/services"
 	"gng/internal/utils/helpers"
 	"gng/internal/utils/logger"
@@ -66,18 +67,23 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	// Роуты
-	r.Route("/api/v1", func(r chi.Router) {
-		r.Route("/users", userHandler.Routes)
-		r.Route("/auth", authHandler.Routes)
-		r.Route("/games", gameHandler.Routes)
-		r.Route("/items", itemHandler.Routes)
-	})
-
-	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
+	})
+
+	apiRouter := chi.NewRouter()
+	r.Mount("/api/v1", apiRouter)
+
+	apiRouter.Route("/auth", authHandler.Routes)
+
+	// secured routes
+	apiRouter.Group(func(r chi.Router) {
+		r.Use(middlewares.AuthRoute)
+
+		r.Route("/games", gameHandler.Routes)
+		r.Route("/items", itemHandler.Routes)
+		r.Route("/users", userHandler.Routes)
 	})
 
 	port := helpers.GetEnv("PORT", "8080")
