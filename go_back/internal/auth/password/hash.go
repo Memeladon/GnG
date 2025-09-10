@@ -1,4 +1,4 @@
-package auth
+package password
 
 import (
 	"fmt"
@@ -15,17 +15,17 @@ type Hasher interface {
 	Compare(hash string, str string) error
 }
 
-type PasswordHasher struct {
+type BcryptHasher struct {
 	cost int
 }
 
-func NewPasswordHash() *PasswordHasher {
-	return &PasswordHasher{
+func NewBcryptHasher() *BcryptHasher {
+	return &BcryptHasher{
 		cost: bcrypt.MinCost,
 	}
 }
 
-func (h *PasswordHasher) Hash(str string) (string, error) {
+func (h *BcryptHasher) Hash(str string) (string, error) {
 	if str == "" || len(str) > MaxPasswordSize {
 		return "", fmt.Errorf("password %s is incompatible for hashing", str)
 	}
@@ -38,6 +38,6 @@ func (h *PasswordHasher) Hash(str string) (string, error) {
 	return string(hash), nil
 }
 
-func (h *PasswordHasher) Compare(hash string, str string) error {
+func (h *BcryptHasher) Compare(hash string, str string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(str))
 }

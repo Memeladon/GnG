@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"gng/internal/auth"
+	"gng/internal/auth/password"
+	"gng/internal/auth/token"
 	"gng/internal/models"
 	"gng/internal/services"
 	"gng/internal/utils/logger"
@@ -16,14 +17,14 @@ type AuthHandler struct {
 	userService *services.UserService
 	logger      *logger.Logger
 
-	passwordHasher auth.Hasher
+	passwordHasher password.Hasher
 }
 
 func NewAuthHandler(userService *services.UserService, logger *logger.Logger) *AuthHandler {
 	return &AuthHandler{
 		userService:    userService,
 		logger:         logger,
-		passwordHasher: auth.NewPasswordHash(),
+		passwordHasher: password.NewBcryptHasher(),
 	}
 }
 
@@ -52,8 +53,18 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: send jwt token
-	responses.Simple(w, user, nil)
+	claims := token.TokenClaims{
+		UserId:    user.ID.String(),
+		UserLogin: user.Login,
+	}
+
+	authToken, err := token.New(claims)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	responses.Simple(w, models.Token{Token: authToken}, nil)
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
