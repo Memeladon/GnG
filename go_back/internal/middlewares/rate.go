@@ -15,18 +15,16 @@ const (
 var (
 	limitChan chan types.None
 
-	rateLimit = 0
-	initOnce  sync.Once
+	initOnce sync.Once
 )
 
 func initRateLimit() {
 	l := helpers.GetEnv("RATE_LIMIT", DefaultRateLimit)
-	rlim, err := strconv.Atoi(l)
-	if err != nil || rlim < 0 {
+	rateLimit, err := strconv.Atoi(l)
+	if err != nil || rateLimit < 0 {
 		panic("env var RATE_LIMIT must be a positive integer number")
 	}
 
-	rateLimit = rlim
 	limitChan = make(chan types.None, rateLimit)
 }
 
