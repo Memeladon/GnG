@@ -1,3 +1,3 @@
-package helpers
+package types
 
 type None struct{}

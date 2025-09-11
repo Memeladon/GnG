@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"gng/internal/utils/helpers"
+	"gng/internal/utils/helpers/types"
 	"net/http"
 	"strconv"
 	"sync"
@@ -12,7 +13,7 @@ const (
 )
 
 var (
-	limitChan chan helpers.None
+	limitChan chan types.None
 
 	rateLimit = 0
 	initOnce  sync.Once
@@ -26,7 +27,7 @@ func initRateLimit() {
 	}
 
 	rateLimit = rlim
-	limitChan = make(chan helpers.None, rateLimit)
+	limitChan = make(chan types.None, rateLimit)
 }
 
 func RateLimit(next http.Handler) http.Handler {
@@ -34,7 +35,7 @@ func RateLimit(next http.Handler) http.Handler {
 		initOnce.Do(initRateLimit)
 
 		select {
-		case limitChan <- helpers.None{}:
+		case limitChan <- types.None{}:
 			next.ServeHTTP(w, r)
 			<-limitChan
 		default:
