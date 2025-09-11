@@ -5,7 +5,6 @@ import (
 	"gng/internal/utils/helpers/types"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
 const (
@@ -14,11 +13,9 @@ const (
 
 var (
 	limitChan chan types.None
-
-	initOnce sync.Once
 )
 
-func initRateLimit() {
+func init() {
 	l := helpers.GetEnv("RATE_LIMIT", DefaultRateLimit)
 	rateLimit, err := strconv.Atoi(l)
 	if err != nil || rateLimit < 0 {
@@ -30,8 +27,6 @@ func initRateLimit() {
 
 func RateLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		initOnce.Do(initRateLimit)
-
 		select {
 		case limitChan <- types.None{}:
 			next.ServeHTTP(w, r)
