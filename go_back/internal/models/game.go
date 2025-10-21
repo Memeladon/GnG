@@ -8,7 +8,7 @@ import (
 
 // Game представляет игровую сессию для игрока
 type Game struct {
-	ID             uuid.UUID      `json:"id" db:"id"`
+	ID             int            `json:"id" db:"id"`
 	PlayerID       uuid.UUID      `json:"player_id" db:"player_id"`
 	Status         GameStatus     `json:"status" db:"status"`
 	Score          int            `json:"score" db:"score"`

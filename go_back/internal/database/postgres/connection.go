@@ -65,13 +65,12 @@ func getConfig() *Config {
 		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
 
-	// Проверяем, что все обязательные переменные установлены
 	if config.Host == "" || config.Port == "" || config.User == "" ||
 		config.Password == "" || config.DBName == "" {
 		return nil
 	}
 
-	// Устанавливаем SSLMode по умолчанию, если не указан
+	// SSLMode по умолчанию
 	if config.SSLMode == "" {
 		config.SSLMode = "disable"
 	}
@@ -79,7 +78,6 @@ func getConfig() *Config {
 	return config
 }
 
-// Close закрывает соединение с базой данных
 func (db *DB) Close() error {
 	return db.DB.Close()
 }

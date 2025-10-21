@@ -8,7 +8,7 @@ import (
 
 // ItemInstance представляет экземпляр предмета в инвентаре игрока
 type ItemInstance struct {
-	ID          uuid.UUID  `json:"id" db:"id"`
+	ID          int  `json:"id" db:"id"`
 	ItemID      uuid.UUID  `json:"item_id" db:"item_id"`
 	InventoryID uuid.UUID  `json:"inventory_id" db:"inventory_id"`
 	IsUsed      bool       `json:"is_used" db:"is_used"`
